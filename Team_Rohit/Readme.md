@@ -1,4 +1,4 @@
-This directory is lead by Rohit.
+This directory is lead by Rohit Mukhi.
 The collaborators to this directory are:
   1) Ankush Saha
   2) Arpit Mishra
