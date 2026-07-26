@@ -1,0 +1,66 @@
+ The landscape for LLM and SLM training, fine-tuning, and parameter-efficient adaptation (like LoRA and QLoRA) is divided into **Open-Source Developer Frameworks**, **Managed Cloud/Serverless Training Platforms**, and **Proprietary API Tuning**.
+
+---
+
+## 1. Open-Source Developer Frameworks (Self-Hosted / Local)
+
+If you are running training jobs on your own hardware or renting cloud GPUs (e.g., RunPod, Lambda Labs), these tools give you complete control over hyperparameters, data processing, and optimization techniques.
+
+### High-Level Config-Driven Tools
+
+* **LLaMA-Factory:** One of the most popular frameworks for fine-tuning hundreds of open models. Features a web UI (`llamafactory-cli webui`) and supports SFT (Supervised Fine-Tuning), DPO, PPO, LoRA, and QLoRA out of the box.
+* **Axolotl:** A YAML-driven framework used heavily by open-source researchers. Allows configuring model architectures, datasets, and training schedules without writing boilerplate PyTorch code.
+* **Unsloth:** Highly optimized framework specifically designed for fast, memory-efficient fine-tuning on consumer/single-GPU setups. Reduces VRAM usage drastically while speeding up LoRA/QLoRA training.
+
+### Ecosystem Core Libraries
+
+* **Hugging Face (`trl`, `peft`, `accelerate`):** The standard Python ecosystem.
+* `TRL` (Transformer Reinforcement Learning) handles SFT, DPO, and RLHF.
+* `PEFT` manages parameter-efficient techniques like LoRA/Prefix Tuning.
+* `Accelerate` handles multi-GPU/distributed orchestration.
+
+
+* **DeepSpeed (Microsoft) & FSDP (PyTorch):** Essential distributed training backends for scaling across multi-node or multi-GPU environments (e.g., full-parameter tuning on 70B+ models).
+
+---
+
+## 2. Managed / Cloud Fine-Tuning Platforms
+
+These platforms manage compute provisioning, dataset pipelines, and serving adapters without forcing you to configure raw Kubernetes or CUDA drivers.
+
+* **Predibase:** Infrastructure tailored around LoRA/QLoRA fine-tuning and cheap adapter serving. Allows training domain-specific fine-tunes and serving multiple adapters on a single shared GPU instance.
+* **OpenPipe:** Focused on model distillation. Captures logs from production APIs (like GPT-4o or Claude) and automatically builds training datasets to fine-tune smaller open-weight models (like Llama or Qwen) to match performance at a fraction of the cost.
+* **Together AI / Fireworks AI:** Developer platforms offering hosted fine-tuning APIs. You upload a dataset (JSONL), start a tuning run via CLI/SDK, and immediately get a serverless endpoint to query.
+* **Hugging Face AutoTrain:** A low-code/no-code solution hosted on Hugging Face Spaces that lets you upload a CSV/JSON file, select a base model, and train via a web interface.
+
+---
+
+## 3. Cloud Provider & Enterprise Suites
+
+For enterprise workflows requiring strict data governance, integrated storage, and automated MLOps pipelines.
+
+* **Amazon SageMaker JumpStart:** Managed pipelines for fine-tuning models like Llama, Mistral, or Falcon, integrated with AWS IAM and S3.
+* **Google Cloud Vertex AI:** Supports tuning Google's open models (Gemma) or foundation models with direct integration to BigQuery datasets.
+* **Azure Machine Learning:** Integrates with Microsoft's ecosystem (including enterprise Phi SLM fine-tuning) with native experiment tracking.
+
+---
+
+## 4. Closed-Source API Fine-Tuning
+
+If you don't need open-weight models and want to adapt proprietary models via vendor APIs:
+
+* **OpenAI Fine-Tuning API:** Upload JSONL dataset for instruction-tuning models like GPT-4o-mini.
+* **Anthropic API:** Fine-tuning support for safety-constrained workflows.
+* **Google Gemini API:** Lightweight tuning available directly via Google AI Studio or Vertex AI.
+
+---
+
+### Recommended Tooling Stack by Use Case
+
+| Use Case | Recommended Platform / Tool |
+| --- | --- |
+| **Local / Single Consumer GPU** | Unsloth, LLaMA-Factory, or Ollama + QLoRA |
+| **Custom Open-Weight Research** | Axolotl + Hugging Face (`trl`/`peft`) + DeepSpeed |
+| **Distill Larger Models into SLMs** | OpenPipe or Predibase |
+| **Production Serverless Adapter Deployment** | Together AI, Fireworks AI, or Predibase |
+| **No-Code / Low-Code Prototyping** | Hugging Face AutoTrain or LLaMA-Factory WebUI |
